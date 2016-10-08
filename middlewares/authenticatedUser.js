@@ -6,7 +6,7 @@ var User = require('../models').user;
 function sendForbidden(res, msg) {
   res.status(403);
   res.json({
-    message: msg
+    errors: [msg]
   });
 }
 
