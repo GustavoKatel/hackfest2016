@@ -2,14 +2,14 @@
   "development": {
     "username": "root",
     "password": "root",
-    "database": "hackfest_test1",
+    "database": "hackfest",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
-  "test": {
+  "development_meta": {
     "username": "root",
-    "password": null,
-    "database": "database_test",
+    "password": "root",
+    "database": "hackfest_meta",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

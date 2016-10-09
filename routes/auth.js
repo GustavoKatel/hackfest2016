@@ -4,7 +4,7 @@ var jwt = require('jsonwebtoken');
 var FB = require('fb');
 
 var config = require('../config');
-var User = require('../models').user;
+var User = require('../models').meta.user;
 
 /* GET auth listing. */
 router.post('/login', (req, res, next) => {

@@ -26,7 +26,7 @@ router.get('/cidade/:cod_municipio', (req, res) => {
     models.sequelize.query(
       query,
       {
-        replacements: [req.params.cod_municipio],
+        replacements: [req.query.cod_municipio],
         type: models.sequelize.QueryTypes.SELECT
       }
     )
@@ -47,7 +47,7 @@ router.get('/cidade/:cod_municipio', (req, res) => {
 router.get('/licitacao/', (req, res) => {
 
   // not enough params
-  if(!req.params.no || !req.params.ug || !req.params.tp) {
+  if(!req.query.no || !req.query.ug || !req.query.tp) {
     res.json({
       errors: ['Could not process request']
     });
@@ -66,7 +66,7 @@ router.get('/licitacao/', (req, res) => {
     models.sequelize.query(
       query,
       {
-        replacements: [req.params.no, req.params.tp, req.params.ug],
+        replacements: [req.query.no, req.query.tp, req.query.ug],
         type: models.sequelize.QueryTypes.SELECT
       }
     )
@@ -86,13 +86,13 @@ router.get('/licitacao/', (req, res) => {
 // ?no=[str]&ug=[str]&tp=[str]
 // body.comment: str
 // body.photo_url: str
-router.post('/licitacao/', (req, res) => {
+router.post('/licitacao/', authenticatedUser, (req, res) => {
 
   // not enough params
   if(
-    !req.params.no ||
-    !req.params.ug ||
-    !req.params.tp ||
+    !req.query.no ||
+    !req.query.ug ||
+    !req.query.tp ||
     !req.body.comment ||
     !req.body.photo_url
   ) {
@@ -102,7 +102,41 @@ router.post('/licitacao/', (req, res) => {
     return;
   }
 
-  
+  let fields = {
+    no: '',
+    ug: '',
+    tp: ''
+  };
+
+  Object.keys(fields).forEach((f) => {
+    fields[f] = req.query[f];
+  });
+
+  fields.comment = req.body.comment;
+  fields.photo_url = req.body.photo_url;
+
+  models.meta.licitacao_userdata.create(fields)
+  .then((userdata) => {
+
+    userdata.setUser(req.user).then( () => {
+
+      res.json({
+        status: 'ok'
+      });
+
+    }).catch( () => {
+
+      res.json({
+        errors: ['Could not save the request']
+      });
+
+    });
+
+  }).catch((err) => {
+    res.json({
+      errors: ['Could not save the request']
+    });
+  });
 
 });
 

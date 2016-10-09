@@ -1,7 +1,7 @@
 var jwt = require('jsonwebtoken');
 
 var config = require('../config');
-var User = require('../models').user;
+var User = require('../models').meta.user;
 
 function sendForbidden(res, msg) {
   res.status(403);
