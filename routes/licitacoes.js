@@ -26,7 +26,7 @@ router.get('/cidade/:cod_municipio', (req, res) => {
     models.sequelize.query(
       query,
       {
-        replacements: [req.query.cod_municipio],
+        replacements: [req.params.cod_municipio],
         type: models.sequelize.QueryTypes.SELECT
       }
     )
