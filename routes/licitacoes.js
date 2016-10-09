@@ -23,7 +23,6 @@ router.get('/cidade/:cod_municipio', (req, res) => {
       return;
     }
 
-    console.log(query);
     models.sequelize.query(
       query,
       {
@@ -46,6 +45,14 @@ router.get('/cidade/:cod_municipio', (req, res) => {
 
 // ?no=[str]&ug=[str]&tp=[str]
 router.get('/licitacao/', (req, res) => {
+
+  // not enough params
+  if(!req.params.no || !req.params.ug || !req.params.tp) {
+    res.json({
+      errors: ['Could not process request']
+    });
+    return;
+  }
 
   fs.readFile('./queries/licitacao_info.sql', 'utf8', (err, query) => {
 
@@ -76,9 +83,26 @@ router.get('/licitacao/', (req, res) => {
 
 });
 
-router.get('/test', authenticatedUser, (req, res, next) => {
+// ?no=[str]&ug=[str]&tp=[str]
+// body.comment: str
+// body.photo_url: str
+router.post('/licitacao/', (req, res) => {
 
-  res.send(`Ok, ${req.user.name}`);
+  // not enough params
+  if(
+    !req.params.no ||
+    !req.params.ug ||
+    !req.params.tp ||
+    !req.body.comment ||
+    !req.body.photo_url
+  ) {
+    res.json({
+      errors: ['Could not process request']
+    });
+    return;
+  }
+
+  
 
 });
 
