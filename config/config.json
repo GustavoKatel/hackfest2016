@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": "root",
-    "database": "hackfest",
+    "database": "hackfest_test1",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

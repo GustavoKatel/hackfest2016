@@ -13,8 +13,8 @@ SELECT
   ANY_VALUE(lic.vl_Licitacao) AS vl_Total,
   SUM(pgtos.vl_Pagamento) AS vl_Pago
 FROM licitacao AS lic
-INNER JOIN empenhos AS emp ON emp.cd_UGestora = lic.cd_UGestora AND emp.nu_Licitacao = lic.nu_Licitacao AND emp.tp_Licitacao = lic.tp_Licitacao
-INNER JOIN pagamentos AS pgtos ON pgtos.cd_UGestora = lic.cd_UGestora AND pgtos.dt_Ano = emp.dt_Ano AND pgtos.cd_UnidOrcamentaria = emp.cd_UnidOrcamentaria AND pgtos.nu_Empenho = emp.nu_Empenho
+INNER JOIN empenhos_2 AS emp ON emp.cd_UGestora = lic.cd_UGestora AND emp.nu_Licitacao = lic.nu_Licitacao AND emp.tp_Licitacao = lic.tp_Licitacao
+INNER JOIN pagamentos_2 AS pgtos ON pgtos.cd_UGestora = lic.cd_UGestora AND pgtos.dt_Ano = emp.dt_Ano AND pgtos.cd_UnidOrcamentaria = emp.cd_UnidOrcamentaria AND pgtos.nu_Empenho = emp.nu_Empenho
 INNER JOIN codigo_ugestora AS cug ON cug.cd_Ugestora = lic.cd_UGestora AND cug.dt_Ano = emp.dt_Ano
 INNER JOIN contratos AS cont ON cont.cd_UGestora = lic.cd_UGestora AND cont.dt_Ano = emp.dt_Ano AND cont.tp_Licitacao = lic.tp_Licitacao
 WHERE tp_Objeto = "1" AND lic.nu_Licitacao = ? AND lic.tp_Licitacao = ? AND lic.cd_UGestora = ?

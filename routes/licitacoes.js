@@ -43,6 +43,45 @@ router.get('/cidade/:cod_municipio', (req, res) => {
 
 });
 
+router.get('/busca', (req, res) => {
+
+  // not enough params
+  if(!req.query.q) {
+    res.json({
+      errors: ['Please inform the query search']
+    });
+    return;
+  }
+
+  fs.readFile('./queries/lista_licitacoes_por_nome.sql', 'utf8', (err, query) => {
+
+    if(err || !query) {
+      res.json({
+        errors: ['Could not process request']
+      });
+      return;
+    }
+
+    models.sequelize.query(
+      query,
+      {
+        replacements: [`%${req.query.q}%`],
+        type: models.sequelize.QueryTypes.SELECT
+      }
+    )
+    .then((licitacao) => {
+      res.json(licitacao);
+    })
+    .catch((err) => {
+      res.json({
+        errors: ['DB Error']
+      });
+    });
+
+  });
+
+});
+
 // ?no=[str]&ug=[str]&tp=[str]
 router.get('/licitacao/', (req, res) => {
 
@@ -85,7 +124,7 @@ router.get('/licitacao/', (req, res) => {
 
 // ?no=[str]&ug=[str]&tp=[str]
 // body.comment: str
-// body.photo_url: str
+// files.photo: str
 router.post('/licitacao/', authenticatedUser, (req, res) => {
 
   // not enough params
@@ -94,7 +133,8 @@ router.post('/licitacao/', authenticatedUser, (req, res) => {
     !req.query.ug ||
     !req.query.tp ||
     !req.body.comment ||
-    !req.body.photo_url
+    !req.files ||
+    !req.files.photo
   ) {
     res.json({
       errors: ['Could not process request']
@@ -113,28 +153,42 @@ router.post('/licitacao/', authenticatedUser, (req, res) => {
   });
 
   fields.comment = req.body.comment;
-  fields.photo_url = req.body.photo_url;
 
-  models.meta.licitacao_userdata.create(fields)
-  .then((userdata) => {
+  fs.readFile(req.files.photo.path, function (err, data) {
+    // ...
+    var newPath = "../uploads/"+req.files.photo.name;
+    fs.writeFile(newPath, data, function (err) {
 
-    userdata.setUser(req.user).then( () => {
+      if(err) {
+        res.json({
+          errors: ['Could not save file']
+        });
+        return;
+      }
 
-      res.json({
-        status: 'ok'
+      models.meta.licitacao_userdata.create(fields)
+      .then((userdata) => {
+
+        userdata.setUser(req.user).then( () => {
+
+          res.json({
+            status: 'ok'
+          });
+
+        }).catch( () => {
+
+          res.json({
+            errors: ['Could not save the request']
+          });
+
+        });
+
+      }).catch((err) => {
+        res.json({
+          errors: ['Could not save the request']
+        });
       });
 
-    }).catch( () => {
-
-      res.json({
-        errors: ['Could not save the request']
-      });
-
-    });
-
-  }).catch((err) => {
-    res.json({
-      errors: ['Could not save the request']
     });
   });
 
